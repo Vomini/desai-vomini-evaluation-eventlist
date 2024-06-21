@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <button id="add-event">Add New Event</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>Event</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Actions</th>
+                </tr>
+                <tbody class="event-list"></tbody>
+        </table>
+    </div>
+
+    <script src="./api/eventApi.js"></script>
+    <script src="./features/eventView.js"></script>
+    <script src="./features/eventController.js"></script>
+    <script src="./features/eventModel.js"></script>
+    <script src="./index.js"></script>
+    
+
+    
+</body>
+</html>
