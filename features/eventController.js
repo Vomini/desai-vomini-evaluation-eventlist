@@ -14,7 +14,7 @@ class EventController{
 
     setUpevents(){
         this.setupAddEvent();
-        // this.setupDeleteEvent();
+        this.setupDeleteEvent();
         this.setupEditEvent();
     }
 
@@ -32,14 +32,22 @@ class EventController{
         if (this.#view.addBtn) {
             this.#view.addBtn.addEventListener('click', () => {
                 this.#view.addEvent();
+                console.log(this.#view.eventList);
 
                 const plusBtn = document.querySelector('.add-button');
                 if (plusBtn) {
                     plusBtn.addEventListener('click', () => {
+                        
                         const eventItem = document.getElementById('event-temp');
-                        const eventName = eventItem.querySelector("input[type='text']").value;
-                        const eventStart = eventItem.querySelector("input[type='date']").value;
-                        const eventEnd = eventItem.querySelector("input[type='date']").value;
+                
+                        const eventNameInput = eventItem.querySelector("td input[type='text']");
+                        const eventStartInput = eventItem.querySelector("td input[type='date']:first-child");
+                        const eventEndInput = eventItem.querySelector("td input[type='date']:last-child");
+
+                        const eventName = eventNameInput.value;
+                        const eventStart = eventStartInput.value;
+                        const eventEnd = eventEndInput.value;
+                        
 
                         if (!eventName || !eventStart || !eventEnd) {
                             alert("Input not valid");
@@ -72,13 +80,21 @@ class EventController{
     }
 
     setupDeleteEvent() {
-        const deleteButtons = document.querySelectorAll('[class^="delete-button"]');
-        deleteButtons.forEach(button => {
-            button.addEventListener('click', async (e) => {
-                let eventItem = e.target;
-                // Traverse up the DOM tree to find the parent <tr> element
+        // Select the parent container that holds all the delete buttons
+
+        // Add event listener to the parent container
+        this.#view.eventList.addEventListener("click", async(e) => {
+            // Check if the clicked element is a delete button
+          
+            const deleteButton = e.target.closest('.delete-button');
+            console.log(deleteButton);
+        
+        // If a delete button was clicked or one of its child elements was clicked
+            if (deleteButton) {
+                let eventItem = deleteButton;
                 while (eventItem && eventItem.nodeName !== 'TR') {
                     eventItem = eventItem.parentNode;
+                    console.log(eventItem);
                 }
                 if (eventItem) {
                     const eventId = eventItem.id;
@@ -91,51 +107,157 @@ class EventController{
                         console.error('Failed to delete event:', error);
                     }
                 }
-            });
+            }
         });
     }
+    // setupEditEvent() {
+    //     if (this.#view.eventList) {
+    //         this.#view.eventList.addEventListener('click', async (e) => {
+    //             // Handle edit button click
+    //             if (e.target.classList.contains('edit-button')) {
+    //                 const eventItem = e.target.closest('tr');
+    //                 console.log(eventItem);
+    //                 const eventId = eventItem.id;
+    //                 const event = this.#model.getEvents().find(event => event.id === eventId);
+    //                 this.#view.editEvent(event);
+    //             }
+    //         });
+    
+    //             // // Handle save button click
+    //             // this.#view.eventList.addEventListener('click', async (e) => {
+    //             //     const saveButton = e.target.closest('save-button');
+    //             //     // console.log(saveButton);
+    //             //     if (saveButton) {
+    //             //         const eventItem = e.target.closest('tr');
+    //             //         console.log(eventItem);
+    //             //         const temp = eventItem.id;
+    //             //         const id = temp.split("-")[1];
+    //             //         const newName = eventItem.querySelector('td').textContent;
+    //             //         const newStart = eventItem.querySelector('td:nth-child(2)').textContent;
+    //             //         const newEnd = eventItem.querySelector('td:nth-child(3)').textContent;
+    //             //         console.log(newName, newStart, newEnd);
+        
+    //             //         if (!newName || !newStart || !newEnd) {
+    //             //             alert('Input not valid');
+    //             //             return;
+    //             //         }
+        
+    //             //         const updatedEvent = { id: id, eventName: newName, startDate: newStart, endDate: newEnd };
+        
+    //             //         try {
+    //             //             await eventAPI.editEventAPI(updatedEvent);
+    //             //             this.#view.renderEventList(updatedEvent);
+    //             //             this.#view.removeEvent(eventId);
+    //             //         } catch (error) {
+    //             //             console.error('Failed to edit event:', error);
+    //             //         }
+    //             //     }
+                
+    //             // });
+    //         }
+
+    // }
+
+    
     
     
 
     setupEditEvent() {
         if (this.#view.eventList) {
             this.#view.eventList.addEventListener('click', async (e) => {
-                if (e.target.classList.contains('edit-button')) {
-                    const eventItem = e.target.closest('tr');
-                    const eventId = eventItem.id;
-                    const event = this.#model.getEvents().find(event => event.id === eventId);
-                    this.#view.editEvent(event);
+                // Handle edit button click
+                const editButton = e.target.closest('.edit-button');
+                if (editButton) {
+                    let eventItem = editButton;
+                    while (eventItem && eventItem.nodeName !== 'TR') {
+                        eventItem = eventItem.parentNode;
+                        console.log(eventItem);
+                    }
+                    if (eventItem) {
+                        const eventId = eventItem.id;
+                        console.log(eventId);
+                        const event = this.#model.getEvents().find(event => event.id === eventId);
+                        console.log(event);
+                        
+        
+                        this.#view.editEvent(event);
     
-                    const saveButton = document.querySelector('.save-button');
-                    if(saveButton) {
-                    saveButton.addEventListener("click", async () => {
-                        const newName = eventItem.querySelector("input[type='text']").value;
-                        const newStart = eventItem.querySelector("input[type='date']").value;
-                        const newEnd = eventItem.querySelector("input[type='date']").value;
-                        console.log(newName, newStart, newEnd);
+                    // Set up the save button click listener
+                    const saveBtn = eventItem.querySelector('.save-button');
+                    if (saveBtn) {
+                        saveBtn.addEventListener('click', async () => {
+                            const updatedEventName = eventItem.querySelector("td input[type='text']").value;
+                            const updatedStartDate = eventItem.querySelector("td input[type='date']:first-child").value;
+                            const updatedEndDate = eventItem.querySelector("td input[type='date']:last-child").value;
     
-                        if (!newName || !newStart || !newEnd) {
-                            alert("Input not valid");
-                            return;
-                        }
+                            if (!updatedEventName || !updatedStartDate || !updatedEndDate) {
+                                alert('Input not valid');
+                                return;
+                            }
     
-                        const updatedEvent = { id: event.id, name: newName, start: newStart, end: newEnd };
+                            const updatedEvent = {
+                                id: eventId,
+                                eventName: updatedEventName,
+                                startDate: updatedStartDate,
+                                endDate: updatedEndDate
+                            };
     
-                        try {
-                            await eventAPI.editEventAPI(updatedEvent);
-                            this.#model.editEvent(updatedEvent);
-                            this.#view.renderEventList(updatedEvent);
-                            this.#view.removeEvent(eventId);
-                        } catch (error) {
-                            console.error('Failed to edit event:', error);
-                        }
-                    });
+                            try {
+                                await eventAPI.editEventAPI(updatedEvent);
+                                this.#model.editEvent(updatedEvent); // Assuming updateEvent is a method in your model to update the event
+                                this.#view.renderEventList(updatedEvent); // Re-render the updated event
+                                this.#view.removeEvent(eventItem.id); // Remove the edit row
+                            } catch (error) {
+                                console.error('Failed to edit event:', error);
+                            }
+                        });
+                    }
                 }
             }
             });
-        } else {
-            console.error('Event list not found');
         }
     }
-    
 }
+    
+    
+                // Handle save button click
+                
+            // this.#view.eventList.addEventListener('click', async (e) => {
+            //     const saveButton = e.target.closest('.save-button');
+            //     if (saveButton) {
+            //         let eventItem = saveButton;
+            //         while (eventItem && eventItem.nodeName !== 'TR') {
+            //             eventItem = eventItem.parentNode;
+            //             console.log(eventItem);
+            //         }
+                // if (saveButton) {
+                //     const eventItem = e.target.closest('tr');
+                //     console.log(eventItem);
+                //     const id = eventItem.id;
+                //     const newName = eventItem.querySelector('td').textContent;
+                //     const newStart = eventItem.querySelector('td:nth-child(2)').textContent;
+                //     const newEnd = eventItem.querySelector('td:nth-child(3)').textContent;
+                //     console.log(newName, newStart, newEnd);
+                //     if (!newName || !newStart || !newEnd) {
+                //         alert('Input not valid');
+                //         return;
+                //     }
+                    
+                //     const updatedEvent = { id:id, eventName: newName, startDate: newStart, endDate: newEnd };
+                    
+    
+                //     try {
+                //         await eventAPI.editEventAPI(updatedEvent);
+                //         this.#view.renderEventList(updatedEvent);
+                //         this.#view.removeEvent(eventId);
+                //     } catch (error) {
+                //         console.error('Failed to edit event:', error);
+                //     }    
+    
+                    
+                // };
+            
+
+
+    
+
