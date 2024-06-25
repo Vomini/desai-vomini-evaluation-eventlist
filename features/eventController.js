@@ -30,25 +30,26 @@ class EventController{
 
     setupAddEvent() {
         if (this.#view.addBtn) {
-            this.#view.addBtn.addEventListener('click', () => {
+            this.#view.addBtn.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent the default form submission behavior
                 this.#view.addEvent();
-                console.log(this.#view.eventList);
-
+    
                 const plusBtn = document.querySelector('.add-button');
                 if (plusBtn) {
-                    plusBtn.addEventListener('click', () => {
-                        
+                    plusBtn.addEventListener('click', (e) => {
+                        e.preventDefault(); // Prevent the default form submission behavior
+    
                         const eventItem = document.getElementById('event-temp');
-                
+    
                         const eventNameInput = eventItem.querySelector("td input[type='text']");
-                        const eventStartInput = eventItem.querySelector("td input[type='date']:first-child");
-                        const eventEndInput = eventItem.querySelector("td input[type='date']:last-child");
-
+                        const eventStartInput = eventItem.querySelector(".startDate");
+                        const eventEndInput = eventItem.querySelector(".endDate");
+    
                         const eventName = eventNameInput.value;
                         const eventStart = eventStartInput.value;
                         const eventEnd = eventEndInput.value;
-                        
-
+                        console.log(eventName, eventStart, eventEnd);
+    
                         if (!eventName || !eventStart || !eventEnd) {
                             alert("Input not valid");
                             return;
@@ -62,14 +63,17 @@ class EventController{
                                 this.#model.addEvent(_event);
                                 this.#view.renderEventList(_event);
                                 this.#view.removeEvent('event-temp'); // Clean up the temporary row
+                            }).catch((error) => {
+                                console.error('Error posting event:', error);
                             });
                         }
                     });
                 }
-
+    
                 const cancelBtn = document.querySelector('.cancel-button');
                 if (cancelBtn) {
-                    cancelBtn.addEventListener('click', () => {
+                    cancelBtn.addEventListener('click', (e) => {
+                        e.preventDefault(); // Prevent the default form submission behavior
                         this.#view.removeEvent('event-temp'); // Clean up the temporary row
                     });
                 }
@@ -78,7 +82,7 @@ class EventController{
             console.error('Add Event button not found');
         }
     }
-
+    
     setupDeleteEvent() {
         // Select the parent container that holds all the delete buttons
 
@@ -110,57 +114,7 @@ class EventController{
             }
         });
     }
-    // setupEditEvent() {
-    //     if (this.#view.eventList) {
-    //         this.#view.eventList.addEventListener('click', async (e) => {
-    //             // Handle edit button click
-    //             if (e.target.classList.contains('edit-button')) {
-    //                 const eventItem = e.target.closest('tr');
-    //                 console.log(eventItem);
-    //                 const eventId = eventItem.id;
-    //                 const event = this.#model.getEvents().find(event => event.id === eventId);
-    //                 this.#view.editEvent(event);
-    //             }
-    //         });
-    
-    //             // // Handle save button click
-    //             // this.#view.eventList.addEventListener('click', async (e) => {
-    //             //     const saveButton = e.target.closest('save-button');
-    //             //     // console.log(saveButton);
-    //             //     if (saveButton) {
-    //             //         const eventItem = e.target.closest('tr');
-    //             //         console.log(eventItem);
-    //             //         const temp = eventItem.id;
-    //             //         const id = temp.split("-")[1];
-    //             //         const newName = eventItem.querySelector('td').textContent;
-    //             //         const newStart = eventItem.querySelector('td:nth-child(2)').textContent;
-    //             //         const newEnd = eventItem.querySelector('td:nth-child(3)').textContent;
-    //             //         console.log(newName, newStart, newEnd);
-        
-    //             //         if (!newName || !newStart || !newEnd) {
-    //             //             alert('Input not valid');
-    //             //             return;
-    //             //         }
-        
-    //             //         const updatedEvent = { id: id, eventName: newName, startDate: newStart, endDate: newEnd };
-        
-    //             //         try {
-    //             //             await eventAPI.editEventAPI(updatedEvent);
-    //             //             this.#view.renderEventList(updatedEvent);
-    //             //             this.#view.removeEvent(eventId);
-    //             //         } catch (error) {
-    //             //             console.error('Failed to edit event:', error);
-    //             //         }
-    //             //     }
-                
-    //             // });
-    //         }
 
-    // }
-
-    
-    
-    
 
     setupEditEvent() {
         if (this.#view.eventList) {
@@ -187,8 +141,9 @@ class EventController{
                     if (saveBtn) {
                         saveBtn.addEventListener('click', async () => {
                             const updatedEventName = eventItem.querySelector("td input[type='text']").value;
-                            const updatedStartDate = eventItem.querySelector("td input[type='date']:first-child").value;
-                            const updatedEndDate = eventItem.querySelector("td input[type='date']:last-child").value;
+                            const updatedStartDate = eventItem.querySelector(".startDate").value;
+                            const updatedEndDate = eventItem.querySelector(".endDate").value;
+                            console.log(updatedEventName, updatedStartDate, updatedEndDate );
     
                             if (!updatedEventName || !updatedStartDate || !updatedEndDate) {
                                 alert('Input not valid');
@@ -220,43 +175,7 @@ class EventController{
 }
     
     
-                // Handle save button click
                 
-            // this.#view.eventList.addEventListener('click', async (e) => {
-            //     const saveButton = e.target.closest('.save-button');
-            //     if (saveButton) {
-            //         let eventItem = saveButton;
-            //         while (eventItem && eventItem.nodeName !== 'TR') {
-            //             eventItem = eventItem.parentNode;
-            //             console.log(eventItem);
-            //         }
-                // if (saveButton) {
-                //     const eventItem = e.target.closest('tr');
-                //     console.log(eventItem);
-                //     const id = eventItem.id;
-                //     const newName = eventItem.querySelector('td').textContent;
-                //     const newStart = eventItem.querySelector('td:nth-child(2)').textContent;
-                //     const newEnd = eventItem.querySelector('td:nth-child(3)').textContent;
-                //     console.log(newName, newStart, newEnd);
-                //     if (!newName || !newStart || !newEnd) {
-                //         alert('Input not valid');
-                //         return;
-                //     }
-                    
-                //     const updatedEvent = { id:id, eventName: newName, startDate: newStart, endDate: newEnd };
-                    
-    
-                //     try {
-                //         await eventAPI.editEventAPI(updatedEvent);
-                //         this.#view.renderEventList(updatedEvent);
-                //         this.#view.removeEvent(eventId);
-                //     } catch (error) {
-                //         console.error('Failed to edit event:', error);
-                //     }    
-    
-                    
-                // };
-            
 
 
     

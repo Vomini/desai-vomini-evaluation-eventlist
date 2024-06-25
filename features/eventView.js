@@ -14,11 +14,11 @@ class EventView{
         eventItem.appendChild(eventName);
 
         const eventStart = document.createElement("td");
-        eventStart.innerHTML = `<input type="date">`;
+        eventStart.innerHTML = `<input type="date" class="startDate">`;
         eventItem.appendChild(eventStart);
 
         const eventEnd = document.createElement("td");
-        eventEnd.innerHTML = `<input type="date">`;
+        eventEnd.innerHTML = `<input type="date" class="endDate">`;
         eventItem.appendChild(eventEnd);
 
         const eventActions = document.createElement("td");
@@ -108,8 +108,8 @@ class EventView{
 
 
         eventName.innerHTML = `<input type="text" value="${originalData.name}">`;
-        eventStart.innerHTML = `<input type="date" value="${originalData.start}">`;
-        eventEnd.innerHTML = `<input type="date" value="${originalData.end}">`;
+        eventStart.innerHTML = `<input type="date" class="startDate" value="${originalData.start}">`;
+        eventEnd.innerHTML = `<input type="date" class="endDate" value="${originalData.end}">`;
 
 
     
